@@ -604,6 +604,9 @@ class HscriptInterp {
             return expr(e);
         case ECheckType(e,_):
             return expr(e);
+        #if (rulescript || hscript_improved)
+        default:
+        #end
         }
         return null;
     }

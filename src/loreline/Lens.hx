@@ -82,6 +82,9 @@ class FuncHscript {
                             case EInvalidOp(op): 'Invalid operator: $op';
                             case EInvalidAccess(f): 'Invalid access: $f';
                             case ECustom(msg): msg;
+                            #if (rulescript || hscript_improved)
+                            case e: '$e';
+                            #end
                         },
                         codeToHscript.toLorelinePos(func.pos, hscriptError.pmin, hscriptError.pmax)
                     );
@@ -99,6 +102,9 @@ class FuncHscript {
                             case EInvalidOp(op): 'Invalid operator: $op';
                             case EInvalidAccess(f): 'Invalid access: $f';
                             case ECustom(msg): msg;
+                            #if (rulescript || hscript_improved)
+                            case e: '$e';
+                            #end
                         },
                         func.pos
                     );
@@ -1449,11 +1455,17 @@ class Lens {
         var checker = new hscript.Checker();
         try {
             @:privateAccess {
-                checker.types.parser.allowJSON = true;
-                checker.types.parser.allowTypes = true;
-                checker.types.parser.resumeErrors = true;
+                #if hscript_improved
+                final parser:hscript.Parser = new hscript.Parser();
+                #else
+                final parser:hscript.Parser =  checker.types.parser;
+                #end
 
-                final expr = checker.types.parser.parseString(truncated);
+                parser.allowJSON = true;
+                parser.allowTypes = true;
+                parser.resumeErrors = true;
+
+                final expr = parser.parseString(truncated);
                 checker.check(expr, null, true);
             }
         }
